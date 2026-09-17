@@ -16,7 +16,9 @@ export function LoginScreen({ status = 401, setup = false }: { status?: number; 
     <main className="login-shell">
       <section className="login-brand" aria-label="2º Ofício de Manacapuru">
         <div className="login-brand-top">
-          <span className="login-brand-symbol" aria-hidden="true"><FileText size={23} strokeWidth={1.5} /></span>
+          <span className="login-brand-symbol" aria-hidden="true">
+            <Image src="/simbolo-cartorio.png" alt="2º Ofício" width={26} height={38} className="object-contain" priority />
+          </span>
           <div><p className="login-wordmark">2º Ofício</p><p className="login-brand-location">MANACAPURU · AMAZONAS</p></div>
         </div>
         <div className="login-brand-copy">

@@ -11,7 +11,9 @@ function run(args, cwd) {
  if (result.error) throw result.error;
  if (result.status !== 0) process.exit(result.status ?? 1);
 }
-if(process.env.OFICIOS_BUILD_SKIP_INSTALL !== "1") run([npm, "ci", "--include=dev", "--no-audit", "--no-fund"], app);
+if (!fs.existsSync(path.join(app, "node_modules/next/dist/bin/next")) && process.env.OFICIOS_BUILD_SKIP_INSTALL !== "1") {
+  run([npm, "ci", "--include=dev", "--no-audit", "--no-fund"], app);
+}
 run([path.join(app, "node_modules/next/dist/bin/next"), "build", "--webpack"], app);
 const source = path.join(app, ".next");
 const standalone = path.join(source, "standalone");

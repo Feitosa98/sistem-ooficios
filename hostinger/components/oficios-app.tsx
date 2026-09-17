@@ -1376,9 +1376,13 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
       <Sidebar collapsible="icon" className="border-r-0">
         <SidebarHeader className="border-b border-[#d8c9a3]/50 px-4 py-5">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-[#a68845] font-serif text-lg font-bold text-white shadow-sm">
-              2º
-            </div>
+            <Image
+              src="/apple-touch-icon.png"
+              alt="2º Ofício"
+              width={36}
+              height={36}
+              className="size-9 shrink-0 rounded-lg shadow-sm object-cover"
+            />
             <div className="min-w-0 group-data-[collapsible=icon]:hidden">
               <p className="truncate font-serif text-base font-bold text-[#213b36]">
                 Sistema de Ofícios
