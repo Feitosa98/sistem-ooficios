@@ -8,9 +8,10 @@ import { token, digest, otp, codeDigest } from "./tokens";
 import { sendAuthMail } from "./mail";
 export const SESSION_COOKIE = "oficios_session";
 export function appOrigin() {
- const url = new URL(process.env.APP_URL || "http://localhost:3001");
- if(process.env.NODE_ENV==="production" && url.protocol!=="https:") throw new HttpError(503,"O endereço seguro do sistema precisa ser configurado.");
- return url.origin;
+  const fallback = process.env.NODE_ENV === "production" ? "https://oficios.registromanacapuru.com.br" : "http://localhost:3001";
+  const raw = process.env.APP_URL || fallback;
+  const url = new URL(raw.startsWith("http") ? raw : `https://${raw}`);
+  return url.origin;
 }
 export function checkOrigin(request: Request) {
  if(request.headers.get("origin") !== appOrigin() || request.headers.get("sec-fetch-site")==="cross-site") throw new HttpError(403,"Origem da requisição não permitida.");

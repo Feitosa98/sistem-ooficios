@@ -34,34 +34,28 @@ if (fs.existsSync(hostingerDir)) {
   fs.cpSync(srcNext, destNext, { recursive: true });
   console.log("==> Pasta .next sincronizada com a raiz com sucesso!");
 
-  // 4. Configurar e validar estrutura standalone para detecção da Hostinger
+  // 4. Configurar e nivelar estrutura standalone para detecção e execução da Hostinger
   const standaloneDir = path.join(destNext, "standalone");
   if (fs.existsSync(standaloneDir)) {
     console.log("==> Configurando arquivos standalone para Hostinger...");
     const hostingerStandalone = path.join(standaloneDir, "hostinger");
     const rootStandaloneServer = path.join(standaloneDir, "server.js");
 
-    // Garantir que .next/standalone/server.js existe (requisito do verificador da Hostinger)
-    if (fs.existsSync(path.join(hostingerStandalone, "server.js")) && !fs.existsSync(rootStandaloneServer)) {
-      console.log("==> Criando server.js na raiz de .next/standalone/...");
-      const serverWrapper = `import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const target = path.join(__dirname, "hostinger", "server.js");
-
-if (fs.existsSync(target)) {
-  await import("./hostinger/server.js");
-} else {
-  console.error("ERRO: Servidor standalone não encontrado em " + target);
-  process.exit(1);
-}
-`;
-      fs.writeFileSync(rootStandaloneServer, serverWrapper, "utf-8");
+    // Copiar server.js oficial do Next.js para a raiz de standalone (SEM WRAPPERS e SEM TOP-LEVEL AWAIT)
+    const hostingerServerJs = path.join(hostingerStandalone, "server.js");
+    if (fs.existsSync(hostingerServerJs)) {
+      console.log("==> Instalando server.js nativo na raiz de .next/standalone/...");
+      fs.cpSync(hostingerServerJs, rootStandaloneServer);
     }
 
-    // Copiar public para standalone
+    // Copiar conteúdo de .next de hostinger para standalone/.next
+    const hostingerNextInStandalone = path.join(hostingerStandalone, ".next");
+    const standaloneNextDir = path.join(standaloneDir, ".next");
+    if (fs.existsSync(hostingerNextInStandalone)) {
+      fs.cpSync(hostingerNextInStandalone, standaloneNextDir, { recursive: true });
+    }
+
+    // Copiar public para standalone e hostingerStandalone
     const srcPublic = path.join(hostingerDir, "public");
     if (fs.existsSync(srcPublic)) {
       fs.cpSync(srcPublic, path.join(standaloneDir, "public"), { recursive: true });
@@ -70,7 +64,7 @@ if (fs.existsSync(target)) {
       }
     }
 
-    // Copiar .next/static para standalone/.next/static
+    // Copiar .next/static para standalone/.next/static e hostingerStandalone/.next/static
     const srcStatic = path.join(destNext, "static");
     if (fs.existsSync(srcStatic)) {
       fs.cpSync(srcStatic, path.join(standaloneDir, ".next", "static"), { recursive: true });
@@ -81,7 +75,7 @@ if (fs.existsSync(target)) {
 
     // Também espelhar na pasta hostinger/.next/standalone para redundância total
     const hostingerNextStandalone = path.join(srcNext, "standalone");
-    if (fs.existsSync(hostingerNextStandalone) && !fs.existsSync(path.join(hostingerNextStandalone, "server.js"))) {
+    if (fs.existsSync(hostingerNextStandalone)) {
       if (fs.existsSync(rootStandaloneServer)) {
         fs.cpSync(rootStandaloneServer, path.join(hostingerNextStandalone, "server.js"));
       }
@@ -98,7 +92,7 @@ if (fs.existsSync(target)) {
   // 6. Validar existência do standalone server
   const checkServer = path.join(destNext, "standalone", "server.js");
   if (fs.existsSync(checkServer)) {
-    console.log("==> SUCESSO: Standalone server verificado em:", checkServer);
+    console.log("==> SUCESSO: Standalone server nativo verificado em:", checkServer);
   } else {
     console.error("ERRO: .next/standalone/server.js não foi encontrado!");
     process.exit(1);
