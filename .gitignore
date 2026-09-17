@@ -27,6 +27,7 @@ out/
 Thumbs.db
 *.tmp
 *.7z*
+*.zip
 
 # debug
 npm-debug.log*
