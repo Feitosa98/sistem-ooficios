@@ -1,0 +1,14 @@
+import { spawn } from "node:child_process";
+import { mkdirSync } from "node:fs";
+import path from "node:path";
+const [tool, ...args] = process.argv.slice(2);
+const tools = { build: "vinext/dist/cli.js", start: "vinext/dist/cli.js", lint: "eslint/bin/eslint.js", generate: "drizzle-kit/bin.cjs" };
+if (!tools[tool]) throw new Error("Unknown tool");
+const runtime = path.resolve(".sites-runtime");
+mkdirSync(path.join(runtime, "wrangler/logs"), { recursive: true });
+const env = { ...process.env, WRANGLER_WRITE_LOGS: "false", WRANGLER_LOG_PATH: path.join(runtime, "wrangler/logs"), MINIFLARE_REGISTRY_PATH: path.join(runtime, "wrangler/registry") };
+const defaults = { build: ["build"], start: ["start"], lint: [".", "--ignore-pattern", "dist", "--ignore-pattern", ".next", "--ignore-pattern", ".sites-runtime", "--ignore-pattern", ".wrangler"], generate: ["generate"] };
+const child = spawn(process.execPath, [path.resolve("node_modules", tools[tool]), ...defaults[tool], ...args], { stdio: "inherit", env });
+const timeout = tool === "build" ? setTimeout(() => { console.error("Build exceeded 3 minutes"); child.kill(); }, 180000) : null;
+child.on("error", (error) => { console.error(error.message); process.exitCode = 1; if(timeout) clearTimeout(timeout); });
+child.on("exit", (code) => { if(timeout) clearTimeout(timeout); process.exitCode = code ?? 1; });

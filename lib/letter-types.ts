@@ -1,0 +1,31 @@
+export type LetterStatus = "Rascunho" | "Em revisão" | "Assinado" | "Enviado" | "Arquivado";
+export type Letter = {
+  id: number;
+  version: number;
+  number: number;
+  year: number;
+  suffix: string;
+  issueDate: string;
+  department: string;
+  subject: string;
+  reference: string;
+  recipient: string;
+  recipientEmail: string;
+  recipientRole: string;
+  salutation: string;
+  body: string;
+  closing: string;
+  signerName: string;
+  signerRole: string;
+  status: LetterStatus;
+  notes: string;
+  signedFileKey: string | null;
+  signedFileName: string | null;
+  signedFileSize: number | null;
+  signedAt: string | null;
+  sentAt: string | null;
+  signatureProvider: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
