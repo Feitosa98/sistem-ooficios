@@ -22,6 +22,19 @@ for (const prefix of ['', 'hostinger/']) {
       assert.ok(mime.split('\r\n').filter(line => /^[A-Za-z0-9+/=]+$/.test(line)).every(line => line.length <= 76));
     } finally { h.close(); }
   });
+
+  test(`${prefix}email template formats 6-digit access code into dedicated visual card`, () => {
+    const h = harness();
+    try {
+      const { renderEmailHtml } = h.load(`${prefix}lib/email-template.ts`);
+      const body = 'Seu código de confirmação é: 849201\n\nVálido por 10 minutos. Não compartilhe este código.';
+      const html = renderEmailHtml({ fromName: 'Cartório 2º Ofício', subject: 'Código de acesso — Sistema de Ofícios', body });
+      assert.ok(html.includes('849201'));
+      assert.ok(html.includes('Código de Verificação'));
+      assert.ok(html.includes('Validade:'));
+      assert.ok(html.includes('Cartório 2º Ofício'));
+    } finally { h.close(); }
+  });
 }
 
 test('SMTP nests both message formats and keeps the PDF attachment', async () => {
