@@ -3,6 +3,7 @@
   "name": "Assinador do Sistema de Ofícios",
   "version": "1.0.0",
   "description": "Conecta o Sistema de Ofícios aos certificados do Windows, com confirmação local para cada assinatura.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3nTirAAr6fxkQByaS3UNVJ09U84A+IZ61AmxbhSfB4a00NjKsPDHseT4vMUJ4Gv2737URbgrGssqxzHFYghu2OnRSu7Cy+wtkyQb+U/HRbF53ZetLqmF3CxjtHuoC+EpB7z4BsGk6tGjw0NI0QEkJ+DahYfQKHXszwpaV1SoyW6LjamLH8ljMYiuWCRxT7CiBnq1VWg/wIjRSFsDbVEDnwIk5haJnymU9jywc5BrVpzRcLVWknOvEcBWLRk3YIZjzyRgUaGxOCy8It6HnkJl4gaz56p08xUAxlDe5kwNnT51ugcQor5OknHfZS6Sb8yLVWA+FHSfRT87Oq6GM5bReQIDAQAB",
   "permissions": ["nativeMessaging"],
   "background": { "service_worker": "background.js" },
   "content_scripts": [{
@@ -12,3 +13,4 @@
     "all_frames": false
   }]
 }
+

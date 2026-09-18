@@ -58,3 +58,54 @@ test("missing mail configuration does not consume a delivery attempt",async()=>{
  const api=h.load("app/api/oficios/[id]/enviar-email/route.ts");const res=await api.POST(request("","POST",{recipientEmail:"person@example.com",subject:"Ofício",body:"Segue"}),context(letter.id));assert.equal(res.status,400);assert.equal(h.sqlite.prepare("select count(*) n from email_deliveries").get().n,0);
  }finally{h.close();}
 });
+
+test("employees administration allows create, edit and delete with security guards",async()=>{
+ const h=harness();try{
+ h.setIdentity("iagofeitosa3@gmail.com");
+ const api=h.load("app/api/usuarios/route.ts");
+
+ const createRes=await api.POST(request("/api/usuarios","POST",{
+  name:"Novo Funcionário",
+  email:"novo@example.com",
+  role:"operator",
+  active:true,
+ }),{});
+ assert.equal(createRes.status,201);
+ const created=(await createRes.json()).user;
+ assert.equal(created.name,"Novo Funcionário");
+ assert.equal(created.email,"novo@example.com");
+ assert.equal(created.role,"operator");
+ assert.equal(Boolean(created.active),true);
+
+ const dupRes=await api.POST(request("/api/usuarios","POST",{
+  name:"Outro",
+  email:"novo@example.com",
+ }),{});
+ assert.equal(dupRes.status,409);
+
+ const editRes=await api.PATCH(request("/api/usuarios","PATCH",{
+  id:created.id,
+  name:"Funcionário Alterado",
+  role:"admin",
+  active:true,
+ }),{});
+ assert.equal(editRes.status,200);
+ const updated=(await editRes.json()).user;
+ assert.equal(updated.name,"Funcionário Alterado");
+ assert.equal(updated.role,"admin");
+
+ const delRes=await api.DELETE(request(`/api/usuarios?id=${created.id}`,"DELETE"),{});
+ assert.equal(delRes.status,200);
+
+ const adminUser=h.sqlite.prepare("select id from app_users where role='admin' and active=1").get();
+ const demoteRes=await api.PATCH(request("/api/usuarios","PATCH",{
+  id:adminUser.id,
+  role:"operator",
+ }),{});
+ assert.equal(demoteRes.status,400);
+
+ const selfDel=await api.DELETE(request(`/api/usuarios?id=${adminUser.id}`,"DELETE"),{});
+ assert.equal(selfDel.status,400);
+ }finally{h.close();}
+});
+

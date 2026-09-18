@@ -5,13 +5,11 @@
 <body><main><p>SISTEMA DE OFÍCIOS</p><h1>Assine com seu certificado, sem sair do sistema</h1><p>Instale o componente local e a extensão no Windows, com Chrome ou Edge. A assinatura começa no site e é confirmada em uma janela do Windows.</p>
 <p><a class="download" href="/assinador-local.zip" download>Baixar assinador para Windows</a></p>
 <h2>Prepare seu certificado</h2><p><strong>A1:</strong> importe o arquivo .pfx ou .p12 no Windows em Usuário Atual → Pessoal. <strong>A3:</strong> conecte o token ou cartão e instale o driver oficial. O certificado deve estar disponível no repositório pessoal do Windows.</p>
-<h2>Instale uma vez por computador e usuário</h2><ol>
-<li>Extraia o ZIP para uma pasta permanente e leia o arquivo <strong>LEIA-ME.md</strong>.</li>
-<li>Abra <code>chrome://extensions</code> ou <code>edge://extensions</code>. Ative <strong>Modo do desenvolvedor</strong>, clique em <strong>Carregar sem compactação</strong> e selecione a pasta <strong>extension</strong> do pacote.</li>
-<li>Copie o ID da extensão exibido no navegador.</li>
-<li>Abra o PowerShell na pasta extraída e execute, substituindo o ID: <p><code>powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -ExtensionId "ID_DA_EXTENSAO"</code></p></li>
-<li>Recarregue o sistema, abra a assinatura e selecione <strong>Assinador local — Windows, A1 e A3</strong>.</li>
-<li>Escolha o certificado. Ao assinar, confira a solicitação na janela do Windows e confirme. Informe o PIN quando o driver solicitar.</li></ol>
+<h2>Instalação rápida (3 passos simples)</h2><ol>
+<li>Extraia o arquivo ZIP baixado para uma pasta permanente no seu computador (ex.: em <em>Documentos</em>).</li>
+<li>Dê um duplo clique no arquivo <strong>instalar.bat</strong> para registrar o assinador automaticamente no Windows (não precisa abrir PowerShell nem digitar códigos).</li>
+<li>Abra <code>chrome://extensions</code> no Chrome (ou <code>edge://extensions</code> no Edge), ative o <strong>Modo do desenvolvedor</strong> no canto superior, clique em <strong>Carregar sem compactação</strong> e escolha a pasta <strong>extension</strong> que foi extraída.</li>
+<li>Pronto! Recarregue a página do sistema, abra a assinatura e escolha <strong>Assinador local — Windows, A1 e A3</strong>.</li></ol>
 <div class="note"><strong>Compatibilidade:</strong> Windows 10/11 com .NET Framework 4.8 e certificados RSA. Tokens A3 precisam de driver compatível com o repositório de certificados do Windows; a compatibilidade deve ser testada com seu dispositivo. Esta versão usa instalação manual da extensão e não possui assinatura Authenticode do executável.</div>
 <p>A chave privada permanece no computador ou token. O sistema continua verificando a assinatura e a confiança do certificado antes de salvar o PDF.</p>
 <p><a href="/">Voltar ao sistema</a></p></main></body></html>

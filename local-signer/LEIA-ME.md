@@ -9,28 +9,17 @@ Permite iniciar e concluir a assinatura na tela do sistema, com confirmação em
 - A3 físico: instalar o driver oficial do fabricante e conectar o token/cartão. O certificado precisa aparecer no repositório **Pessoal do Usuário Atual** do Windows (`certmgr.msc`), com acesso à chave privada por CSP/CNG. Dispositivos que oferecem somente PKCS#11, certificados em nuvem e certificados não RSA não estão contemplados nesta versão.
 - Certificados RSA aptos a assinatura SHA-256/PKCS#1 v1.5. O servidor aplica as regras de confiança configuradas no sistema.
 
-## Instalação por computador e usuário
+## Instalação simplificada (1 clique)
 
-1. Extraia o pacote completo para uma pasta permanente, por exemplo `Documentos\AssinadorOficios`. Não carregue a extensão dentro do ZIP.
-2. No Chrome, abra `chrome://extensions`; no Edge, `edge://extensions`.
-3. Ative **Modo do desenvolvedor** e use **Carregar sem compactação** para selecionar a pasta `extension` do pacote. A versão inicial é distribuída manualmente; ainda não está publicada nas lojas dos navegadores. Se a organização bloquear extensões manuais, o administrador deve aprovar a distribuição.
-4. Copie o **ID da extensão** mostrado pelo navegador (32 letras).
-5. Abra o PowerShell na pasta do pacote e execute, substituindo o ID:
+1. Extraia o pacote completo (arquivo ZIP) para uma pasta permanente no seu computador (por exemplo, `Documentos\AssinadorOficios`).
+2. Dê um duplo clique no arquivo **`instalar.bat`** (ele registra automaticamente o componente local no Chrome e Edge sem precisar digitar comandos).
+3. No Chrome abra `chrome://extensions` (ou no Edge abra `edge://extensions`):
+   - Ative a chave **Modo do desenvolvedor** (no canto superior direito).
+   - Clique no botão **Carregar sem compactação** (ou "Carregar extensão descompactada").
+   - Selecione a pasta **`extension`** que está dentro da pasta onde você extraiu o assinador.
+4. Pronto! O ID da extensão agora é fixo (`nfhjmjmoniplgdemofngjapmnlkfpcge`) e pré-autorizado. Recarregue o sistema de ofícios.
 
-   ```powershell
-   powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -ExtensionId "ID_COPIADO_DO_NAVEGADOR"
-   ```
-
-   O script registra o componente somente para seu usuário, no Chrome e Edge. Não precisa executar como administrador. Se os dois navegadores mostrarem IDs diferentes, passe ambos em uma sessão PowerShell:
-
-   ```powershell
-   .\install.ps1 -ExtensionId "ID_DO_CHROME", "ID_DO_EDGE"
-   ```
-
-6. Recarregue `https://oficios.registromanacapuru.com.br/`. Na assinatura, selecione **Assinador local — Windows, A1 e A3**.
-7. Escolha o certificado e clique em **Assinar**. Confira o site, o documento e o titular na janela local. Confirme e informe o PIN no diálogo do driver, se solicitado. Aguarde o sistema confirmar que o PDF foi gravado.
-
-Não mova a pasta da extensão depois de carregá-la. Se mudar o ID, execute novamente o instalador. O executável desta versão não possui assinatura Authenticode; verifique a origem do pacote e siga as políticas de instalação da organização.
+> **Dica:** Não apague nem mova a pasta após a instalação. Se precisar desinstalar futuramente, basta dar um duplo clique em `desinstalar.bat`.
 
 ## Limites e diagnóstico
 

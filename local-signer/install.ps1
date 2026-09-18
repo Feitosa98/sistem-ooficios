@@ -1,5 +1,8 @@
-param([Parameter(Mandatory = $true)][ValidatePattern('^[a-p]{32}$')][string[]]$ExtensionId)
+param(
+    [ValidatePattern('^[a-p]{32}$')][string[]]$ExtensionId = @('nfhjmjmoniplgdemofngjapmnlkfpcge')
+)
 $ErrorActionPreference = 'Stop'
+
 $installDir = Join-Path $env:LOCALAPPDATA 'SistemaOficios/Assinador'
 if (!(Test-Path -LiteralPath (Join-Path $PSScriptRoot 'OficiosSigner.exe'))) { throw 'Execute este instalador a partir do pacote compilado, junto de OficiosSigner.exe.' }
 New-Item -ItemType Directory -Path $installDir -Force | Out-Null

@@ -500,6 +500,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
   const [emailRecipientsLoading, setEmailRecipientsLoading] = useState(true);
   const currentUser = user;
   const [savingEmailRecipient, setSavingEmailRecipient] = useState(false);
+  const [savingDraftRecipient, setSavingDraftRecipient] = useState(false);
   const [emailRecipientForm, setEmailRecipientForm] = useState({
     name: "",
     organization: "",
@@ -866,6 +867,47 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
       toast.success("E-mail removido do cadastro.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erro ao excluir e-mail.");
+    }
+  }
+
+  async function saveDraftRecipient() {
+    const name = draft.recipient.trim();
+    const email = draft.recipientEmail.trim().toLowerCase();
+    const organization = draft.recipientRole.trim();
+    if (!name) {
+      toast.error("Informe o nome do destinatário para cadastrar.");
+      return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Informe um e-mail válido para cadastrar o destinatário.");
+      return;
+    }
+
+    const exists = emailRecipients.some((item) => item.email.toLowerCase() === email);
+    if (exists) {
+      toast.info("Este e-mail já está cadastrado na lista de destinatários.");
+      return;
+    }
+
+    setSavingDraftRecipient(true);
+    try {
+      const response = await fetch("/api/destinatarios-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, organization, email }),
+      });
+      const payload = (await response.json()) as { recipient?: EmailRecipient; error?: string };
+      if (!response.ok || !payload.recipient) {
+        throw new Error(payload.error || "Não foi possível cadastrar o destinatário.");
+      }
+      setEmailRecipients((current) =>
+        [...current, payload.recipient!].sort((a, b) => a.name.localeCompare(b.name, "pt-BR")),
+      );
+      toast.success("Destinatário cadastrado com sucesso!");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erro ao cadastrar destinatário.");
+    } finally {
+      setSavingDraftRecipient(false);
     }
   }
 
@@ -2353,47 +2395,104 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                   <Input value={draft.reference} onChange={(event) => updateDraft("reference", event.target.value)} placeholder="Processo, protocolo, matrícula ou expediente" />
                 </div>
                 <div>
-                  <FieldLabel>Destinatário</FieldLabel>
-                  <Input value={draft.recipient} onChange={(event) => updateDraft("recipient", event.target.value)} placeholder="Nome ou órgão destinatário" required />
+                  <div className="flex items-center justify-between">
+                    <FieldLabel>Destinatário</FieldLabel>
+                    {emailRecipients.length > 0 && (
+                      <span className="text-[11px] text-slate-500">
+                        {emailRecipients.length} cadastrado(s)
+                      </span>
+                    )}
+                  </div>
+                  {emailRecipients.length > 0 && (
+                    <div className="mb-2">
+                      <Select
+                        value={
+                          emailRecipients.some(
+                            (item) =>
+                              item.email === draft.recipientEmail ||
+                              item.name.toLowerCase() === draft.recipient.toLowerCase().trim(),
+                          )
+                            ? emailRecipients.find(
+                                (item) =>
+                                  item.email === draft.recipientEmail ||
+                                  item.name.toLowerCase() === draft.recipient.toLowerCase().trim(),
+                              )?.email
+                            : undefined
+                        }
+                        onValueChange={(email) => {
+                          const saved = emailRecipients.find((item) => item.email === email);
+                          if (saved) {
+                            updateDraft("recipient", saved.name);
+                            if (saved.organization) {
+                              updateDraft("recipientRole", saved.organization);
+                            }
+                            updateDraft("recipientEmail", saved.email);
+                            toast.info(`Destinatário "${saved.name}" carregado.`);
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="w-full bg-slate-50/80 border-slate-200">
+                          <SelectValue placeholder="Preencher com destinatário cadastrado..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {emailRecipients.map((recipient) => (
+                            <SelectItem key={recipient.id} value={recipient.email}>
+                              {recipient.name}
+                              {recipient.organization ? ` (${recipient.organization})` : ""} — {recipient.email}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  <Input
+                    value={draft.recipient}
+                    onChange={(event) => updateDraft("recipient", event.target.value)}
+                    placeholder="Nome da autoridade ou órgão destinatário"
+                    required
+                  />
                 </div>
                 <div>
-                  <FieldLabel>E-mail para envio</FieldLabel>
-                  {emailRecipients.length > 0 && (
-                    <Select
-                      value={emailRecipients.some((item) => item.email === draft.recipientEmail) ? draft.recipientEmail : undefined}
-                      onValueChange={(email) => {
-                        const savedRecipient = emailRecipients.find((item) => item.email === email);
-                        updateDraft("recipientEmail", email);
-                        if (savedRecipient && !draft.recipient.trim()) {
-                          updateDraft("recipient", savedRecipient.organization || savedRecipient.name);
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="mb-2 w-full">
-                        <SelectValue placeholder="Selecionar e-mail cadastrado" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {emailRecipients.map((recipient) => (
-                          <SelectItem key={recipient.id} value={recipient.email}>
-                            {recipient.name} — {recipient.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <div className="flex items-center justify-between">
+                    <FieldLabel>E-mail para envio</FieldLabel>
+                    {draft.recipient.trim() &&
+                      draft.recipientEmail.trim() &&
+                      !emailRecipients.some(
+                        (item) => item.email.toLowerCase() === draft.recipientEmail.trim().toLowerCase(),
+                      ) && (
+                        <button
+                          type="button"
+                          onClick={() => void saveDraftRecipient()}
+                          disabled={savingDraftRecipient}
+                          className="text-[11px] font-medium text-emerald-700 hover:text-emerald-800 hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          {savingDraftRecipient ? (
+                            <Loader2 className="size-3 animate-spin" />
+                          ) : (
+                            <Plus className="size-3" />
+                          )}
+                          Salvar nos cadastrados
+                        </button>
+                      )}
+                  </div>
                   <Input
                     type="email"
                     value={draft.recipientEmail}
                     onChange={(event) => updateDraft("recipientEmail", event.target.value)}
-                    placeholder="Selecione um cadastrado ou informe manualmente"
+                    placeholder="destinatario@instituicao.gov.br"
                   />
                   <p className="mt-1.5 text-[11px] text-slate-400">
-                    Os endereços permanentes são cadastrados em Configurações.
+                    Opcional no rascunho; obrigatório para envio por e-mail após a assinatura.
                   </p>
                 </div>
                 <div>
                   <FieldLabel>Cargo ou complemento do destinatário</FieldLabel>
-                  <Textarea rows={2} value={draft.recipientRole} onChange={(event) => updateDraft("recipientRole", event.target.value)} placeholder="Cargo, unidade e nome da autoridade" />
+                  <Textarea
+                    rows={2}
+                    value={draft.recipientRole}
+                    onChange={(event) => updateDraft("recipientRole", event.target.value)}
+                    placeholder="Cargo, unidade e detalhes da autoridade destinatária"
+                  />
                 </div>
                 <div>
                   <FieldLabel>Vocativo</FieldLabel>
@@ -2476,12 +2575,26 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
           ref={previewDialogRef}
           className={`print-dialog flex flex-col gap-3 overflow-hidden bg-[#e7e5df] p-4 sm:p-5 ${
             previewMode === "maximized"
-              ? "!fixed !inset-3 !top-3 !left-3 !right-3 !bottom-3 !w-[calc(100vw-24px)] !h-[calc(100vh-24px)] !max-w-none !max-h-none !translate-x-0 !translate-y-0 !transform-none rounded-xl"
+              ? "preview-maximized rounded-xl"
               : "h-[94vh] w-[min(1180px,96vw)] max-w-none sm:max-w-none"
           }`}
           style={
             previewMode === "maximized"
-              ? undefined
+              ? {
+                  position: "fixed",
+                  top: "12px",
+                  left: "12px",
+                  right: "12px",
+                  bottom: "12px",
+                  width: "calc(100vw - 24px)",
+                  height: "calc(100vh - 24px)",
+                  maxWidth: "none",
+                  maxHeight: "none",
+                  transform: "none",
+                  translate: "none",
+                  margin: 0,
+                  zIndex: 50,
+                }
               : {
                   left: previewPosition ? `${previewPosition.left}px` : "50%",
                   top: previewPosition ? `${previewPosition.top}px` : "50%",
