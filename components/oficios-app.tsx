@@ -94,6 +94,7 @@ import type { Letter } from "@/lib/letter-types";
 import type { AccessUser } from "@/lib/access";
 import { signers } from "@/lib/signers";
 import { AccessSettings } from "@/components/access-settings";
+import { LogoutButton } from "./logout-button";
 import { WebPkiDialog } from "@/components/web-pki-dialog";
 
 type View = "overview" | "letters" | "templates" | "settings";
@@ -1425,7 +1426,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
               className="size-9 shrink-0 rounded-lg shadow-sm object-cover"
             />
             <div className="min-w-0 group-data-[collapsible=icon]:hidden">
-              <p className="truncate font-serif text-base font-bold text-[#213b36]">
+              <p className="truncate font-serif text-base font-bold text-[#09090b]">
                 Sistema de Ofícios
               </p>
               <p className="truncate text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
@@ -1447,7 +1448,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                       isActive={activeView === item.key}
                       tooltip={item.label}
                       onClick={() => setActiveView(item.key)}
-                      className="h-10 data-[active=true]:bg-[#e9e2cf] data-[active=true]:font-semibold data-[active=true]:text-[#213b36]"
+                      className="h-10 data-[active=true]:bg-[#e9e2cf] data-[active=true]:font-semibold data-[active=true]:text-[#09090b]"
                     >
                       <item.icon />
                       <span>{item.label}</span>
@@ -1460,7 +1461,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
         </SidebarContent>
         <SidebarFooter className="border-t border-[#d8c9a3]/50 p-3">
           <div className="flex items-center gap-3 rounded-lg bg-white/65 p-2 group-data-[collapsible=icon]:justify-center">
-            <div className="grid size-8 shrink-0 place-items-center rounded-full bg-[#213b36] text-xs font-bold text-white">
+            <div className="grid size-8 shrink-0 place-items-center rounded-full bg-[#09090b] text-xs font-bold text-white">
               {user.displayName.slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 group-data-[collapsible=icon]:hidden">
@@ -1472,6 +1473,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
               </p>
             </div>
           </div>
+          <LogoutButton />
         </SidebarFooter>
       </Sidebar>
 
@@ -1539,7 +1541,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                 <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
                   <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
                     <div>
-                      <h2 className="font-semibold text-[#18332e]">Ofícios recentes</h2>
+                      <h2 className="font-semibold text-[#09090b]">Ofícios recentes</h2>
                       <p className="mt-0.5 text-xs text-slate-500">
                         Controle central de elaboração, assinatura e envio
                       </p>
@@ -1569,7 +1571,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                   />
                 </div>
 
-                <div className="rounded-2xl bg-[#193b34] p-5 text-white shadow-sm">
+                <div className="rounded-2xl bg-[#09090b] border border-slate-800 p-5 text-white shadow-sm">
                   <div className="mb-5 flex items-start justify-between">
                     <div>
                       <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#d9c384]">
@@ -1647,7 +1649,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
               <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
-                    <h2 className="font-semibold text-[#18332e]">Fluxo padronizado</h2>
+                    <h2 className="font-semibold text-[#09090b]">Fluxo padronizado</h2>
                     <p className="mt-0.5 text-xs text-slate-500">
                       Cada documento mantém número, responsável, conteúdo e etapa
                     </p>
@@ -1664,7 +1666,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                         Etapa {index + 1}
                       </p>
                       <p className="mt-1 text-sm font-semibold text-slate-800">{status}</p>
-                      <p className="mt-3 text-2xl font-semibold text-[#213b36]">
+                      <p className="mt-3 text-2xl font-semibold text-[#09090b]">
                         {counts[status]}
                       </p>
                     </div>
@@ -1678,7 +1680,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
             <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
               <div className="flex flex-col gap-4 border-b border-slate-100 p-5 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <h2 className="font-semibold text-[#18332e]">Acervo de ofícios</h2>
+                  <h2 className="font-semibold text-[#09090b]">Acervo de ofícios</h2>
                   <p className="mt-0.5 text-xs text-slate-500">
                     Pesquise por número, assunto, destinatário ou referência
                   </p>
@@ -1744,7 +1746,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
               </div>
                 <Button
                   onClick={() => setTemplateDialogOpen(true)}
-                  className="bg-[#213b36] text-white hover:bg-[#172e2a]"
+                  className="bg-[#09090b] text-white hover:bg-[#27272a]"
                 >
                   <Upload className="size-4" /> Adicionar novo modelo
                 </Button>
@@ -1758,7 +1760,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                     <div className="grid size-11 place-items-center rounded-xl bg-[#eee6d2] text-[#886e31]">
                       <template.icon className="size-5" />
                     </div>
-                    <h3 className="mt-5 text-lg font-semibold text-[#18332e]">
+                    <h3 className="mt-5 text-lg font-semibold text-[#09090b]">
                       {template.title}
                     </h3>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
@@ -1779,17 +1781,17 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                 {manualTemplates.map((template) => (
                   <article
                     key={`manual-${template.id}`}
-                    className="group flex min-h-64 flex-col rounded-2xl border border-emerald-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                    className="group flex min-h-64 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <div className="grid size-11 place-items-center rounded-xl bg-[#e3ede9] text-[#286054]">
+                      <div className="grid size-11 place-items-center rounded-xl bg-slate-100 text-slate-900">
                         <UploadCloud className="size-5" />
                       </div>
-                      <Badge variant="outline" className="border-emerald-200 text-emerald-700">
+                      <Badge variant="outline" className="border-slate-200 text-slate-700">
                         Adicionado manualmente
                       </Badge>
                     </div>
-                    <h3 className="mt-5 text-lg font-semibold text-[#18332e]">
+                    <h3 className="mt-5 text-lg font-semibold text-[#09090b]">
                       {template.title}
                     </h3>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
@@ -1839,7 +1841,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                     <Mail className="size-5" />
                   </div>
                   <div>
-                    <h2 className="font-semibold text-[#18332e]">Destinatários de e-mail</h2>
+                    <h2 className="font-semibold text-[#09090b]">Destinatários de e-mail</h2>
                     <p className="mt-0.5 text-xs text-slate-500">
                       Cadastre os endereços usados para o envio dos ofícios
                     </p>
@@ -1881,13 +1883,13 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                 <div className="mt-5 grid gap-2 md:grid-cols-2 xl:grid-cols-3">
                   {emailRecipients.map((recipient) => (
                     <div key={recipient.id} className="flex items-center gap-3 rounded-xl border border-slate-100 bg-[#fafaf8] p-3">
-                      <div className="grid size-9 shrink-0 place-items-center rounded-full bg-[#213b36] text-white">
+                      <div className="grid size-9 shrink-0 place-items-center rounded-full bg-[#09090b] text-white">
                         <Mail className="size-4" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium text-slate-800">{recipient.name}</p>
                         {recipient.organization && <p className="truncate text-[11px] text-slate-500">{recipient.organization}</p>}
-                        <p className="truncate text-xs text-emerald-700">{recipient.email}</p>
+                        <p className="truncate text-xs text-slate-700">{recipient.email}</p>
                       </div>
                       <Button
                         type="button"
@@ -1918,11 +1920,11 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
               <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2">
                 <div className="flex items-start justify-between border-b border-slate-100 pb-4">
                   <div className="flex items-start gap-3">
-                    <div className="grid size-10 place-items-center rounded-xl bg-[#213b36] text-white">
+                    <div className="grid size-10 place-items-center rounded-xl bg-[#09090b] text-white">
                       <Send className="size-5" />
                     </div>
                     <div>
-                      <h2 className="font-semibold text-[#18332e]">Servidor de e-mail (envio direto)</h2>
+                      <h2 className="font-semibold text-[#09090b]">Servidor de e-mail (envio direto)</h2>
                       <p className="mt-0.5 text-xs text-slate-500">
                         Configure a conta para disparo automático de ofícios com anexo do PDF assinado
                       </p>
@@ -2016,7 +2018,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                     <Button
                       type="submit"
                       disabled={savingEmailConfig || loadingEmailConfig}
-                      className="bg-emerald-700 text-white hover:bg-emerald-800"
+                      className="bg-[#09090b] text-white hover:bg-[#27272a]"
                     >
                       {savingEmailConfig ? (
                         <>
@@ -2063,7 +2065,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                       <KeyRound className="size-5" />
                     </div>
                     <div>
-                      <h2 className="font-semibold text-[#18332e]">Assinatura Digital Direta (Web PKI)</h2>
+                      <h2 className="font-semibold text-[#09090b]">Assinatura Digital Direta (Web PKI)</h2>
                       <p className="mt-0.5 text-xs text-slate-500">
                         Integração para assinatura direta com Token USB A3 ou Certificado A1 na máquina
                       </p>
@@ -2142,7 +2144,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                     <Building2 className="size-5" />
                   </div>
                   <div>
-                    <h2 className="font-semibold text-[#18332e]">Identidade institucional</h2>
+                    <h2 className="font-semibold text-[#09090b]">Identidade institucional</h2>
                     <p className="mt-0.5 text-xs text-slate-500">
                       Dados aplicados automaticamente aos documentos
                     </p>
@@ -2160,11 +2162,11 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
 
               <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
-                  <div className="grid size-10 place-items-center rounded-xl bg-[#e3ede9] text-[#286054]">
+                  <div className="grid size-10 place-items-center rounded-xl bg-slate-100 text-slate-900">
                     <UserRoundCheck className="size-5" />
                   </div>
                   <div>
-                    <h2 className="font-semibold text-[#18332e]">Assinantes cadastrados</h2>
+                    <h2 className="font-semibold text-[#09090b]">Assinantes cadastrados</h2>
                     <p className="mt-0.5 text-xs text-slate-500">Nome e função inseridos no fecho</p>
                   </div>
                 </div>
@@ -2174,7 +2176,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                       key={signer.name}
                       className="flex items-center gap-3 rounded-xl border border-slate-100 bg-[#fafaf8] p-3"
                     >
-                      <div className="grid size-8 shrink-0 place-items-center rounded-full bg-[#213b36] text-[10px] font-bold text-white">
+                      <div className="grid size-8 shrink-0 place-items-center rounded-full bg-[#09090b] text-[10px] font-bold text-white">
                         {signer.name.split(" ").slice(0, 2).map((part) => part[0]).join("")}
                       </div>
                       <div>
@@ -2187,24 +2189,24 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
               </section>
 
               <AccessSettings />
-              <section className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 xl:col-span-2">
+              <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5 xl:col-span-2">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div className="flex items-start gap-3">
-                    <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-emerald-100 text-emerald-700">
+                    <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-slate-200 text-slate-900">
                       <KeyRound className="size-5" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-emerald-950">
+                      <h3 className="font-semibold text-slate-900">
                         Assinatura digital pelo Assinador ONR
                       </h3>
-                      <p className="mt-1 max-w-3xl text-sm leading-6 text-emerald-800">
+                      <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-600">
                         O certificado A3 é utilizado no ambiente da ONR. O sistema só
                         registra o ofício como assinado depois que o PDF resultante é
                         anexado novamente ao acervo.
                       </p>
                     </div>
                   </div>
-                  <Button asChild variant="outline" className="w-fit border-emerald-300 bg-white text-emerald-800">
+                  <Button asChild variant="outline" className="w-fit border-slate-300 bg-white text-slate-800 hover:bg-slate-100">
                     <a href="https://assinador.onr.org.br/" target="_blank" rel="noreferrer">
                       Abrir Assinador ONR <ExternalLink className="size-4" />
                     </a>
@@ -2256,7 +2258,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
         >
           <DialogHeader className="flex-row items-center justify-between gap-4 border-b border-slate-200 bg-white px-6 py-3 pr-12">
             <div className="min-w-0">
-              <DialogTitle className="flex items-center gap-2 truncate text-[#18332e]">
+              <DialogTitle className="flex items-center gap-2 truncate text-[#09090b]">
                 <FilePenLine className="size-5 shrink-0 text-[#a68845]" />
                 {editingLetterId ? `Editar ofício nº ${formatLetterNumber(draft)}` : "Elaborar novo ofício"}
               </DialogTitle>
@@ -2464,7 +2466,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                           type="button"
                           onClick={() => void saveDraftRecipient()}
                           disabled={savingDraftRecipient}
-                          className="text-[11px] font-medium text-emerald-700 hover:text-emerald-800 hover:underline flex items-center gap-1 cursor-pointer"
+                          className="text-[11px] font-medium text-[#09090b] hover:text-[#27272a] hover:underline flex items-center gap-1 cursor-pointer"
                         >
                           {savingDraftRecipient ? (
                             <Loader2 className="size-3 animate-spin" />
@@ -2607,7 +2609,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
           >
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <DialogTitle className="truncate text-base text-[#18332e]">
+                <DialogTitle className="truncate text-base text-[#09090b]">
                   Ofício nº {previewLetter ? formatLetterNumber(previewLetter) : ""}
                 </DialogTitle>
                 {previewLetter?.status && (
@@ -2631,7 +2633,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                     onClick={() => setPreviewTab("pdf")}
                     className={`rounded-md px-2.5 py-1 font-medium transition ${
                       previewTab === "pdf"
-                        ? "bg-white text-emerald-800 shadow-sm"
+                        ? "bg-white text-slate-900 shadow-sm"
                         : "text-slate-600 hover:text-slate-900"
                     }`}
                   >
@@ -2673,7 +2675,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                   </Button>
                   <Button
                     size="sm"
-                    className="bg-emerald-700 text-white hover:bg-emerald-800"
+                    className="bg-[#09090b] text-white hover:bg-[#27272a]"
                     onClick={() => {
                       const letter = previewLetter;
                       closeLetterPreview();
@@ -2687,7 +2689,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                 <div className="flex items-center gap-1.5">
                   <Button
                     size="sm"
-                    className="bg-emerald-700 text-white hover:bg-emerald-800"
+                    className="bg-[#09090b] text-white hover:bg-[#27272a]"
                     onClick={() => {
                       if (previewLetter) openWebPkiSign(previewLetter);
                     }}
@@ -2807,7 +2809,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
         <DialogContent className="max-h-[92vh] max-w-2xl overflow-y-auto">
           <form onSubmit={saveManualTemplate}>
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-[#18332e]">
+              <DialogTitle className="flex items-center gap-2 text-[#09090b]">
                 <UploadCloud className="size-5 text-[#a68845]" />
                 Adicionar novo modelo
               </DialogTitle>
@@ -2949,8 +2951,8 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
       >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#18332e]">
-              <KeyRound className="size-5 text-emerald-700" />
+            <DialogTitle className="flex items-center gap-2 text-[#09090b]">
+              <KeyRound className="size-5 text-slate-900" />
               Assinar com {signatureProvider === "ONR" ? "o Assinador ONR" : "Adobe Acrobat"}
             </DialogTitle>
             <DialogDescription>
@@ -3002,7 +3004,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
             </div>
 
             <div className="flex items-start gap-3 rounded-xl border border-slate-200 p-4">
-              <div className="grid size-8 shrink-0 place-items-center rounded-full bg-[#e3ede9] text-xs font-bold text-emerald-800">
+              <div className="grid size-8 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-bold text-slate-900">
                 2
               </div>
               <div className="min-w-0 flex-1">
@@ -3014,7 +3016,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                     ? "No portal da ONR, envie o PDF, selecione o certificado A3 e conclua a assinatura com carimbo do tempo."
                     : "No Adobe Acrobat, envie o PDF e conclua a assinatura digital disponível na sua conta."}
                 </p>
-                <Button asChild size="sm" className="mt-3 bg-emerald-700 text-white hover:bg-emerald-800">
+                <Button asChild size="sm" className="mt-3 bg-[#09090b] text-white hover:bg-[#27272a]">
                   <a
                     href={signatureProvider === "ONR" ? "https://assinador.onr.org.br/" : "https://acrobat.adobe.com/?x_api_client_id=acom_nav"}
                     target="_blank"
@@ -3107,8 +3109,8 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
       <Dialog open={Boolean(emailLetter)} onOpenChange={(open) => !open && !sendingEmail && setEmailLetter(null)}>
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[#18332e]">
-              <Mail className="size-5 text-emerald-700" /> Enviar ofício por e-mail
+            <DialogTitle className="flex items-center gap-2 text-[#09090b]">
+              <Mail className="size-5 text-slate-900" /> Enviar ofício por e-mail
             </DialogTitle>
             <DialogDescription>
               {emailLetter
@@ -3200,7 +3202,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                 type="button"
                 onClick={sendDirectEmail}
                 disabled={sendingEmail || !emailMessage.recipient.trim()}
-                className="bg-emerald-700 text-white hover:bg-emerald-800"
+                className="bg-[#09090b] text-white hover:bg-[#27272a]"
               >
                 {sendingEmail ? (
                   <>
@@ -3246,7 +3248,7 @@ function StatCard({
   const iconTone = {
     slate: "bg-slate-100 text-slate-600",
     gold: "bg-[#eee6d2] text-[#886e31]",
-    green: "bg-[#e3ede9] text-[#286054]",
+    green: "bg-slate-100 text-slate-900",
   }[tone];
   return (
     <button
@@ -3258,7 +3260,7 @@ function StatCard({
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium text-slate-500">{label}</p>
-          <p className="mt-2 text-2xl font-semibold tracking-tight text-[#18332e]">{value}</p>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-[#09090b]">{value}</p>
         </div>
         <div className={`grid size-9 place-items-center rounded-xl ${iconTone}`}>
           <Icon className="size-4" />
@@ -3401,7 +3403,7 @@ function LettersTable({
                       </DropdownMenuItem>
                       {onWebPkiSign && (
                         <DropdownMenuItem onClick={() => onWebPkiSign(letter)}>
-                          <KeyRound className="size-4 text-emerald-700" /> Assinar novamente
+                          <KeyRound className="size-4 text-slate-700" /> Assinar novamente
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={() => onCopy(letter)}>
@@ -3424,9 +3426,9 @@ function LettersTable({
                       {onWebPkiSign && (
                         <DropdownMenuItem
                           onClick={() => onWebPkiSign(letter)}
-                          className="font-medium text-emerald-800 focus:bg-emerald-50 focus:text-emerald-900"
+                          className="font-medium text-slate-900 focus:bg-slate-100 focus:text-slate-950"
                         >
-                          <KeyRound className="size-4 text-emerald-700" /> Assinar direto na web
+                          <KeyRound className="size-4 text-slate-700" /> Assinar direto na web
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={() => onSign(letter, "ONR")}>

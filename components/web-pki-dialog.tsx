@@ -565,7 +565,7 @@ export function WebPkiDialog({
       <DialogContent className="sm:max-w-[620px]">
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 text-[#18332e]">
+            <div className="flex items-center gap-2.5 text-[#09090b]">
               <div className="grid size-10 place-items-center rounded-xl bg-amber-100 text-amber-800">
                 <KeyRound className="size-5" />
               </div>
@@ -594,7 +594,7 @@ export function WebPkiDialog({
               onClick={() => setActiveTab("direct")}
               className={`flex items-center justify-center gap-1.5 rounded-lg py-2 font-medium transition ${
                 activeTab === "direct"
-                  ? "bg-white text-[#18332e] shadow-sm"
+                  ? "bg-white text-[#09090b] shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -606,11 +606,11 @@ export function WebPkiDialog({
               onClick={() => setActiveTab("onr")}
               className={`flex items-center justify-center gap-1.5 rounded-lg py-2 font-medium transition ${
                 activeTab === "onr"
-                  ? "bg-white text-[#18332e] shadow-sm"
+                  ? "bg-white text-[#09090b] shadow-sm"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              <Building2 className="size-3.5 text-emerald-700" /> Assinador ONR (Cartório)
+              <Building2 className="size-3.5 text-slate-900" /> Assinador ONR (Cartório)
             </button>
           </div>
         </DialogHeader>
@@ -629,8 +629,8 @@ export function WebPkiDialog({
               {engine === "local" && <>
                 <p className="text-xs leading-5 text-slate-600">Use o certificado A1 instalado no Windows ou conecte o token A3 com o driver do fabricante. Confirme a assinatura na janela do Windows; o PIN será solicitado pelo driver quando necessário.</p>
                 <div className="flex flex-wrap items-center gap-3">
-                  <a href="/assinador-local.zip" download="assinador-local.zip" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-[#18332e] px-3 py-2 text-xs font-medium text-white hover:bg-[#234b43] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"><Download className="size-4" /> Baixar assinador para Windows</a>
-                  <a href="/assinador-local.html" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center text-xs font-medium text-emerald-800 underline">Como instalar no Chrome/Edge</a>
+                  <a href="/assinador-local.zip" download="assinador-local.zip" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-[#09090b] px-3 py-2 text-xs font-medium text-white hover:bg-[#27272a] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"><Download className="size-4" /> Baixar assinador para Windows</a>
+                  <a href="/assinador-local.html" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center text-xs font-medium text-slate-800 underline">Como instalar no Chrome/Edge</a>
                 </div>
               </>}
             </div>
@@ -675,7 +675,7 @@ export function WebPkiDialog({
                 <div className="flex flex-col gap-2 sm:flex-row">
                   <Button
                     type="button"
-                    className="flex-1 bg-[#18332e] text-white hover:bg-[#234b43]"
+                    className="flex-1 bg-[#09090b] text-white hover:bg-[#27272a]"
                     onClick={() => {
                       window.open("https://get.webpkiplugin.com/", "_blank", "noopener,noreferrer");
                     }}
@@ -865,7 +865,7 @@ export function WebPkiDialog({
               <div className="my-6 grid place-items-center py-6 text-center">
                 <div className="relative mb-4 grid size-16 place-items-center rounded-2xl bg-amber-50">
                   <Loader2 className="size-8 animate-spin text-[#a68845]" />
-                  <Cpu className="absolute size-4 text-[#18332e]" />
+                  <Cpu className="absolute size-4 text-[#09090b]" />
                 </div>
 
                 <p className="text-sm font-semibold text-slate-800">
@@ -906,7 +906,7 @@ export function WebPkiDialog({
                   </Button>
                   <Button
                     type="button"
-                    className="flex-1 bg-emerald-700 text-white hover:bg-emerald-800"
+                    className="flex-1 bg-[#09090b] text-white hover:bg-[#27272a]"
                     disabled={isSigning || uploadingSigned}
                     onClick={() => setActiveTab("onr")}
                   >
@@ -971,7 +971,7 @@ export function WebPkiDialog({
                 <Button
                   type="button"
                   size="sm"
-                  className="mt-2.5 w-full bg-emerald-700 text-white hover:bg-emerald-800 text-xs"
+                  className="mt-2.5 w-full bg-[#09090b] text-white hover:bg-[#27272a] text-xs"
                   onClick={() => {
                     window.open("https://assinador.onr.org.br/", "_blank", "noopener,noreferrer");
                   }}
@@ -984,7 +984,7 @@ export function WebPkiDialog({
             {/* Passo 3: Dropzone do PDF assinado */}
             <div className="rounded-xl border border-slate-200 p-3.5">
               <p className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
-                <span className="grid size-4 place-items-center rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">3</span>
+                <span className="grid size-4 place-items-center rounded-full bg-slate-100 text-slate-800 text-[10px] font-bold">3</span>
                 Anexar o PDF Assinado retornado pelo ONR
               </p>
               <p className="mt-0.5 text-[11px] text-slate-500">
@@ -1032,7 +1032,7 @@ export function WebPkiDialog({
               {signedFile && (
                 <Button
                   type="button"
-                  className="mt-2.5 w-full bg-emerald-700 text-white hover:bg-emerald-800 text-xs"
+                  className="mt-2.5 w-full bg-[#09090b] text-white hover:bg-[#27272a] text-xs"
                   onClick={handleUploadOnrSigned}
                   disabled={uploadingSigned}
                 >
@@ -1112,7 +1112,7 @@ export function WebPkiDialog({
                   type="button"
                   disabled={!selectedThumbprint || certificates.length === 0 || isSigning}
                   onClick={() => void handleDirectSign()}
-                  className="bg-emerald-700 text-white hover:bg-emerald-800"
+                  className="bg-[#09090b] text-white hover:bg-[#27272a]"
                 >
                   <CheckCircle2 className="size-4" />
                   Assinar como {selectedCertName || letter?.signerName || "Signatário"}
@@ -1274,7 +1274,7 @@ export function WebPkiDialog({
               </div>
               <Button
                 type="button"
-                className="w-full sm:w-auto bg-emerald-700 text-white hover:bg-emerald-800 text-xs font-semibold shadow-md px-4"
+                className="w-full sm:w-auto bg-[#09090b] text-white hover:bg-[#27272a] text-xs font-semibold shadow-md px-4"
                 onClick={() => void handleConfirmDivergenceAndSign()}
               >
                 <CheckCircle2 className="size-4 mr-1.5" />

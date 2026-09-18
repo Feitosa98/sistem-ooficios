@@ -189,11 +189,11 @@ export function AccessSettings() {
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4">
         <div className="flex items-start gap-3">
-          <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#213b36] text-white">
+          <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#09090b] text-white">
             <Users className="size-5" />
           </div>
           <div>
-            <h2 className="font-semibold text-[#18332e]">Cadastro de Funcionários e Acessos</h2>
+            <h2 className="font-semibold text-[#09090b]">Cadastro de Funcionários e Acessos</h2>
             <p className="mt-0.5 text-xs text-slate-500">
               Cadastre novos colaboradores, edite nomes, e-mails e perfis ou ative/desative acessos ao sistema.
             </p>
@@ -201,7 +201,7 @@ export function AccessSettings() {
         </div>
         <Button
           onClick={handleOpenCreate}
-          className="bg-[#213b36] text-white hover:bg-[#18332e] self-start sm:self-center"
+          className="bg-[#09090b] text-white hover:bg-[#27272a] self-start sm:self-center"
         >
           <UserPlus className="mr-1.5 size-4" />
           Novo Funcionário
@@ -234,7 +234,7 @@ export function AccessSettings() {
                 className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center sm:justify-between hover:bg-[#fafaf8] px-2 rounded-lg transition-colors"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="grid size-9 shrink-0 place-items-center rounded-full bg-[#213b36] text-xs font-semibold text-white">
+                  <div className="grid size-9 shrink-0 place-items-center rounded-full bg-[#09090b] text-xs font-semibold text-white">
                     {initials || "U"}
                   </div>
                   <div className="min-w-0">
@@ -302,7 +302,7 @@ export function AccessSettings() {
         <DialogContent className="sm:max-w-md">
           <form onSubmit={handleCreate}>
             <DialogHeader>
-              <DialogTitle className="text-lg font-semibold text-[#18332e]">
+              <DialogTitle className="text-lg font-semibold text-[#09090b]">
                 Cadastrar Novo Funcionário
               </DialogTitle>
               <DialogDescription>
@@ -348,12 +348,12 @@ export function AccessSettings() {
                     onClick={() => setCreateForm((f) => ({ ...f, role: "operator" }))}
                     className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                       createForm.role === "operator"
-                        ? "border-[#213b36] bg-[#213b36]/5 ring-1 ring-[#213b36]"
+                        ? "border-[#09090b] bg-[#09090b]/5 ring-1 ring-[#09090b]"
                         : "border-slate-200 hover:border-slate-300"
                     }`}
                   >
                     <div className="flex items-center gap-1.5 font-medium text-xs text-slate-800">
-                      <UserIcon className="size-3.5 text-[#213b36]" /> Operador
+                      <UserIcon className="size-3.5 text-[#09090b]" /> Operador
                     </div>
                     <span className="mt-1 text-[11px] text-slate-500">
                       Emite ofícios, minutas e assina documentos.
@@ -383,7 +383,7 @@ export function AccessSettings() {
                 <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
                   <input
                     type="checkbox"
-                    className="size-4 rounded border-slate-300 text-[#213b36] focus:ring-[#213b36]"
+                    className="size-4 rounded border-slate-300 text-[#09090b] focus:ring-[#09090b]"
                     checked={createForm.active}
                     onChange={(e) => setCreateForm((f) => ({ ...f, active: e.target.checked }))}
                   />
@@ -404,7 +404,7 @@ export function AccessSettings() {
               <Button
                 type="submit"
                 disabled={creating}
-                className="bg-[#213b36] text-white hover:bg-[#18332e]"
+                className="bg-[#09090b] text-white hover:bg-[#27272a]"
               >
                 {creating ? <Loader2 className="mr-1.5 size-4 animate-spin" /> : <Check className="mr-1.5 size-4" />}
                 Cadastrar Funcionário
@@ -420,7 +420,7 @@ export function AccessSettings() {
           {editUser && (
             <form onSubmit={handleUpdate}>
               <DialogHeader>
-                <DialogTitle className="text-lg font-semibold text-[#18332e]">
+                <DialogTitle className="text-lg font-semibold text-[#09090b]">
                   Editar Funcionário
                 </DialogTitle>
                 <DialogDescription>
@@ -466,12 +466,12 @@ export function AccessSettings() {
                       onClick={() => setEditForm((f) => ({ ...f, role: "operator" }))}
                       className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                         editForm.role === "operator"
-                          ? "border-[#213b36] bg-[#213b36]/5 ring-1 ring-[#213b36]"
+                          ? "border-[#09090b] bg-[#09090b]/5 ring-1 ring-[#09090b]"
                           : "border-slate-200 hover:border-slate-300"
                       }`}
                     >
                       <div className="flex items-center gap-1.5 font-medium text-xs text-slate-800">
-                        <UserIcon className="size-3.5 text-[#213b36]" /> Operador
+                        <UserIcon className="size-3.5 text-[#09090b]" /> Operador
                       </div>
                       <span className="mt-1 text-[11px] text-slate-500">
                         Emite ofícios, minutas e assina documentos.
@@ -501,7 +501,7 @@ export function AccessSettings() {
                   <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
                     <input
                       type="checkbox"
-                      className="size-4 rounded border-slate-300 text-[#213b36] focus:ring-[#213b36]"
+                      className="size-4 rounded border-slate-300 text-[#09090b] focus:ring-[#09090b]"
                       checked={editForm.active}
                       onChange={(e) => setEditForm((f) => ({ ...f, active: e.target.checked }))}
                     />
@@ -522,7 +522,7 @@ export function AccessSettings() {
                 <Button
                   type="submit"
                   disabled={updating}
-                  className="bg-[#213b36] text-white hover:bg-[#18332e]"
+                  className="bg-[#09090b] text-white hover:bg-[#27272a]"
                 >
                   {updating ? <Loader2 className="mr-1.5 size-4 animate-spin" /> : <Check className="mr-1.5 size-4" />}
                   Salvar Alterações
