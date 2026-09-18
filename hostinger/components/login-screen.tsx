@@ -41,7 +41,7 @@ export function LoginScreen({ status = 401, setup = false }: { status?: number; 
           <div className="login-access-note"><ShieldCheck size={20} aria-hidden="true" /><p><strong>Acesso restrito à equipe</strong><span>Os documentos ficam disponíveis somente para usuários autorizados.</span></p></div>
           <details className="login-help">
             <summary><CircleHelp size={17} aria-hidden="true" />Precisa de ajuda para entrar?</summary>
-            <p>Para o primeiro acesso do administrador (iagofeitosa3@gmail.com), digite seu e-mail e escolha uma nova senha (mínimo de 8 caracteres) diretamente no formulário de login para ativar a conta. Para os demais colaboradores, solicite a liberação do seu e-mail ao administrador.</p>
+            <p>Conecte seu Token USB A3 ou utilize o Certificado A1 instalado no Windows para entrar diretamente. Alternativamente, acesse pela aba de E-mail e Senha. Para novos colaboradores, solicite o cadastro e a liberação ao administrador.</p>
           </details>
         </div>
         <footer className="login-entry-footer"><LockKeyhole size={13} aria-hidden="true" /><span>Ambiente institucional · 2º Ofício de Manacapuru</span></footer>

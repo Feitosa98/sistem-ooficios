@@ -16,7 +16,7 @@ export function harness() {
  const objects=new Map();
  const env={DB,BUCKET:{async put(key,bytes){objects.set(key,Uint8Array.from(bytes));},async get(key){const bytes=objects.get(key);return bytes?{arrayBuffer:async()=>Uint8Array.from(bytes).buffer,body:new Blob([bytes]).stream(),size:bytes.length}:null;},async delete(key){objects.delete(key);}}};
  let identity="iagofeitosa3@gmail.com";
- const mocks=new Map([["cloudflare:workers",{env}],["next/headers",{headers:async()=>new Headers(identity?{"oai-authenticated-user-email":identity}:{})}],["next/navigation",{redirect(){throw new Error("redirect");}}]]);
+ const mocks=new Map([["cloudflare:workers",{env}],["next/headers",{headers:async()=>new Headers(identity?{"oai-authenticated-user-email":identity}:{}),cookies:async()=>({get:()=>null,set:()=>{}})}],["next/navigation",{redirect(){throw new Error("redirect");}}]]);
  const cache=new Map();
  function load(file){
    if(mocks.has(file))return mocks.get(file);
@@ -29,9 +29,9 @@ export function harness() {
    const localRequire=(specifier)=>{
     if(mocks.has(specifier))return mocks.get(specifier);
     if(specifier.endsWith("?inline")){const target=specifier.startsWith("@/")?path.resolve(root,specifier.slice(2,-7)):path.resolve(path.dirname(absolute),specifier.slice(0,-7));return "data:image/"+(target.endsWith(".png")?"png":"jpeg")+";base64,"+fs.readFileSync(target).toString("base64");}
-    if(specifier.startsWith("@/"))return load(path.resolve(root,specifier.slice(2)));
+    if(specifier.startsWith("@/")){const base=absolute.includes("hostinger")?path.resolve(root,"hostinger"):root;return load(path.resolve(base,specifier.slice(2)));}
     if(specifier.startsWith("."))return load(path.resolve(path.dirname(absolute),specifier));
-    return require(specifier);
+    try{return require(specifier);}catch(err){try{const hRequire=createRequire(path.join(root,"hostinger","package.json"));return hRequire(specifier);}catch{throw err;}}
    };
    new Function("require","module","exports",source)(localRequire,loaded,loaded.exports);
    return loaded.exports;
