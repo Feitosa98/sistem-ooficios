@@ -23,12 +23,12 @@ async function generate() {
     <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#1b3d36"/>
-          <stop offset="100%" stop-color="#122521"/>
+          <stop offset="0%" stop-color="#18181b"/>
+          <stop offset="100%" stop-color="#09090b"/>
         </linearGradient>
       </defs>
       <rect width="512" height="512" rx="112" fill="url(#grad)"/>
-      <rect x="18" y="18" width="476" height="476" rx="94" fill="none" stroke="#c4a35a" stroke-width="4" opacity="0.35"/>
+      <rect x="18" y="18" width="476" height="476" rx="94" fill="none" stroke="#c4a35a" stroke-width="4" opacity="0.45"/>
     </svg>
   `);
 

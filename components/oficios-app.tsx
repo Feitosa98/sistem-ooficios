@@ -1477,9 +1477,9 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
         </SidebarFooter>
       </Sidebar>
 
-      <SidebarInset className="office-system-shell min-w-0 bg-[#101916]">
+      <SidebarInset className="office-system-shell min-w-0 bg-[#09090b]">
         <div className="office-background-mark" aria-hidden="true" />
-        <header className="no-print sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/10 bg-[#101916]/90 px-4 text-white backdrop-blur md:px-7">
+        <header className="no-print sticky top-0 z-20 flex h-16 items-center justify-between border-b border-white/10 bg-[#09090b]/95 px-4 text-white backdrop-blur md:px-7">
           <div className="flex items-center gap-3">
             <SidebarTrigger className="md:hidden" />
             <div>
@@ -1528,7 +1528,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                   value={String(counts.Enviado)}
                   note="Enviados por e-mail"
                   icon={Send}
-                  tone="green"
+                  tone="slate"
                   onClick={() => {
                     setStatusFilter("Enviado");
                     setPage(1);
@@ -1615,7 +1615,7 @@ export default function OficiosApp({ user }: { user: AccessUser }) {
                         onClick={() => openManualTemplate(template)}
                         className="group flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/7 p-3 text-left transition hover:bg-white/12"
                       >
-                        <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-emerald-200/10 text-emerald-100">
+                        <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-[#d9c384]/15 text-[#ead79d]">
                           <UploadCloud className="size-4" />
                         </div>
                         <div className="min-w-0 flex-1">
