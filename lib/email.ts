@@ -1,3 +1,4 @@
+import { buildEmailAlternative, renderEmailHtml } from "./email-template";
 import { smtpSend } from "./smtp";
 import { HttpError } from "./api";
 import { eq, sql } from "drizzle-orm";
@@ -120,20 +121,12 @@ function buildMimeMessage(
   mime += `Message-ID: ${messageId}\r\n`;
   mime += `MIME-Version: 1.0\r\n`;
 
-  if (!attachment) {
-    mime += `Content-Type: text/plain; charset=UTF-8\r\n`;
-    mime += `Content-Transfer-Encoding: base64\r\n\r\n`;
-    mime += Buffer.from(body, "utf-8").toString("base64") + "\r\n";
-    return mime;
-  }
+  const html = renderEmailHtml({ fromName, subject, body, attachmentName: attachment?.filename });
+  const alternative = buildEmailAlternative(body, html, `${boundary}_alternative`);
+  if (!attachment) return mime + alternative;
 
   mime += `Content-Type: multipart/mixed; boundary="${boundary}"\r\n\r\n`;
-
-  // Text part
-  mime += `--${boundary}\r\n`;
-  mime += `Content-Type: text/plain; charset=UTF-8\r\n`;
-  mime += `Content-Transfer-Encoding: base64\r\n\r\n`;
-  mime += Buffer.from(body, "utf-8").toString("base64") + "\r\n\r\n";
+  mime += `--${boundary}\r\n${alternative}\r\n`;
 
   // Attachment part
   const safeFilename = attachment.filename.replace(/[\r\n"]/g, "");
@@ -182,6 +175,7 @@ export async function sendEmail(options: SendEmailOptions, providedConfig?: Emai
         to: [options.to],
         subject: options.subject,
         text: options.body,
+        html: renderEmailHtml({ fromName: config.fromName, subject: options.subject, body: options.body, attachmentName: options.attachment?.filename }),
         attachments: options.attachment
           ? [
               {

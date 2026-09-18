@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Instalar assinador local — Sistema de Ofícios</title>
+<style>body{margin:0;background:#f4f3ef;color:#213b36;font:16px/1.65 Arial,sans-serif}main{max-width:760px;margin:32px auto;padding:28px;background:white;border-radius:16px}h1{font:700 30px/1.25 Georgia,serif}h2{font-size:20px;margin-top:28px}a{color:#23664f}li{margin-bottom:12px}code{overflow-wrap:anywhere;background:#f1f3f1;padding:3px 6px;border-radius:4px}.download{display:inline-block;padding:12px 20px;background:#213b36;border-radius:8px;color:white;text-decoration:none}.note{border-left:4px solid #a68845;padding:12px 16px;background:#faf7ef} @media(max-width:600px){main{margin:12px;padding:20px}h1{font-size:25px}ol{padding-left:22px}}</style></head>
+<body><main><p>SISTEMA DE OFÍCIOS</p><h1>Assine com seu certificado, sem sair do sistema</h1><p>Instale o componente local e a extensão no Windows, com Chrome ou Edge. A assinatura começa no site e é confirmada em uma janela do Windows.</p>
+<p><a class="download" href="/assinador-local.zip" download>Baixar assinador para Windows</a></p>
+<h2>Prepare seu certificado</h2><p><strong>A1:</strong> importe o arquivo .pfx ou .p12 no Windows em Usuário Atual → Pessoal. <strong>A3:</strong> conecte o token ou cartão e instale o driver oficial. O certificado deve estar disponível no repositório pessoal do Windows.</p>
+<h2>Instale uma vez por computador e usuário</h2><ol>
+<li>Extraia o ZIP para uma pasta permanente e leia o arquivo <strong>LEIA-ME.md</strong>.</li>
+<li>Abra <code>chrome://extensions</code> ou <code>edge://extensions</code>. Ative <strong>Modo do desenvolvedor</strong>, clique em <strong>Carregar sem compactação</strong> e selecione a pasta <strong>extension</strong> do pacote.</li>
+<li>Copie o ID da extensão exibido no navegador.</li>
+<li>Abra o PowerShell na pasta extraída e execute, substituindo o ID: <p><code>powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -ExtensionId "ID_DA_EXTENSAO"</code></p></li>
+<li>Recarregue o sistema, abra a assinatura e selecione <strong>Assinador local — Windows, A1 e A3</strong>.</li>
+<li>Escolha o certificado. Ao assinar, confira a solicitação na janela do Windows e confirme. Informe o PIN quando o driver solicitar.</li></ol>
+<div class="note"><strong>Compatibilidade:</strong> Windows 10/11 com .NET Framework 4.8 e certificados RSA. Tokens A3 precisam de driver compatível com o repositório de certificados do Windows; a compatibilidade deve ser testada com seu dispositivo. Esta versão usa instalação manual da extensão e não possui assinatura Authenticode do executável.</div>
+<p>A chave privada permanece no computador ou token. O sistema continua verificando a assinatura e a confiança do certificado antes de salvar o PDF.</p>
+<p><a href="/">Voltar ao sistema</a></p></main></body></html>

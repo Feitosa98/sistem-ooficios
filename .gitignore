@@ -28,6 +28,8 @@ Thumbs.db
 *.tmp
 *.7z*
 *.zip
+!/public/assinador-local.zip
+!/hostinger/public/assinador-local.zip
 
 # debug
 npm-debug.log*

@@ -27,7 +27,6 @@ import {
   ChevronDown,
   ChevronUp,
   Info,
-  Globe,
   Building2,
   X,
 } from "lucide-react";
@@ -35,6 +34,7 @@ import { toast } from "sonner";
 
 import type { Letter } from "@/lib/letter-types";
 import { sameSigner } from "@/lib/signers";
+import { createLocalSigner } from "@/lib/local-signer";
 const subscribeEnvironment = () => () => {};
 const CARTORIO_ROLE_OPTIONS = [
   "Escrevente Autorizado",
@@ -92,7 +92,6 @@ interface PkiInstance {
 declare global {
   interface Window {
     LacunaWebPKI?: new (license?: string) => PkiInstance;
-    lacunaWebPkiInstance?: PkiInstance;
     bry?: unknown;
   }
 }
@@ -105,12 +104,16 @@ export function WebPkiDialog({
 
 }: WebPkiDialogProps) {
   const [activeTab, setActiveTab] = useState<"direct" | "onr">("direct");
+  const [engine, setEngine] = useState<"local" | "lacuna">("local");
+  const pkiRef = useRef<PkiInstance | null>(null);
+  const initializationRef = useRef(0);
   const [state, setState] = useState<WebPkiState>("checking");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [certificates, setCertificates] = useState<WebPkiCertificate[]>([]);
   const [selectedThumbprint, setSelectedThumbprint] = useState<string>("");
   const [loadingCerts, setLoadingCerts] = useState(false);
   const [licenseKey, setLicenseKey] = useState<string>("");
+  const effectiveLicenseKey = engine === "lacuna" ? licenseKey : "";
   const [showDiagnostics, setShowDiagnostics] = useState(false);
 
   // Estados do popup de bloqueio de divergência de signatário
@@ -185,7 +188,7 @@ export function WebPkiDialog({
   const signerName = letter?.signerName;
   // Lista certificados com filtro para ICP-Brasil
   const loadCertificates = useCallback((pkiInstance?: PkiInstance) => {
-    const pki = pkiInstance || window.lacunaWebPkiInstance;
+    const pki = pkiInstance || pkiRef.current;
     if (!pki) return;
 
     setLoadingCerts(true);
@@ -194,6 +197,7 @@ export function WebPkiDialog({
         filter: pki.filters ? pki.filters.isPkiBrazil : undefined,
       })
       .success((certs: WebPkiCertificate[]) => {
+        if (pkiRef.current !== pki) return;
         setLoadingCerts(false);
         setCertificates(certs || []);
         if (certs && certs.length > 0) {
@@ -207,83 +211,103 @@ export function WebPkiDialog({
         }
       })
       .error((errorMsg: string) => {
+        if (pkiRef.current !== pki) return;
         setLoadingCerts(false);
+        if (engine === "local") { setErrorMessage(errorMsg); setState("error"); return; }
         console.warn("Tentando listar sem filtro após erro:", errorMsg);
         pki
           .listCertificates()
           .success((fallbackCerts: WebPkiCertificate[]) => {
+            if (pkiRef.current !== pki) return;
             setCertificates(fallbackCerts || []);
             if (fallbackCerts && fallbackCerts.length > 0) {
               setSelectedThumbprint(fallbackCerts[0].thumbprint);
             }
           })
           .error((finalErr: string) => {
+            if (pkiRef.current !== pki) return;
             setErrorMessage(finalErr || "Não foi possível ler os certificados na máquina.");
           });
       });
-  }, [signerName]);
+  }, [signerName, engine]);
 
-  // Inicializa o componente com proteção de timeout de 4 segundos
+  // Inicializa o provedor escolhido e ignora retornos de inicializações antigas.
   const initWebPki = useCallback(async () => {
+    const generation = ++initializationRef.current;
+    pkiRef.current = null;
+    setState("checking");
+    setErrorMessage(null);
+    setCertificates([]);
+    setSelectedThumbprint("");
+    setShowDivergencePopup(false);
+    setDismissedThumbprint(null);
 
     if (initTimeoutRef.current) {
       clearTimeout(initTimeoutRef.current);
     }
 
     try {
-      await ensureScriptLoaded();
-
-      if (!window.LacunaWebPKI) throw new Error("Web PKI indisponível.");
-      const pki = new window.LacunaWebPKI(licenseKey || undefined);
-      window.lacunaWebPkiInstance = pki;
+      let pki: PkiInstance;
+      if (engine === "local") {
+        pki = createLocalSigner(`Ofício nº ${letter?.number || ""}/${letter?.year || ""}`);
+      } else {
+        await ensureScriptLoaded();
+        if (!window.LacunaWebPKI) throw new Error("Web PKI indisponível.");
+        pki = new window.LacunaWebPKI(effectiveLicenseKey || undefined);
+      }
+      if (generation !== initializationRef.current) return;
+      pkiRef.current = pki;
 
       let finished = false;
 
       // Timeout de segurança para nunca travar a interface
       initTimeoutRef.current = setTimeout(() => {
-        if (!finished) {
+        if (!finished && generation === initializationRef.current) {
           finished = true;
-          console.warn("Timeout de 4s atingido aguardando componente Web PKI.");
+          console.warn("Tempo de conexão com o assinador encerrado.");
           setState("not_installed");
         }
-      }, 4000);
+      }, engine === "local" ? 12000 : 4000);
 
       pki.init({
         ready: () => {
-          if (finished) return;
+          if (finished || generation !== initializationRef.current) return;
           finished = true;
           if (initTimeoutRef.current) clearTimeout(initTimeoutRef.current);
           setState("ready");
           loadCertificates(pki);
         },
         notInstalled: () => {
-          if (finished) return;
+          if (finished || generation !== initializationRef.current) return;
           finished = true;
           if (initTimeoutRef.current) clearTimeout(initTimeoutRef.current);
           setState("not_installed");
         },
         defaultError: (message: string, error: unknown) => {
-          if (finished) return;
+          if (finished || generation !== initializationRef.current) return;
           finished = true;
           if (initTimeoutRef.current) clearTimeout(initTimeoutRef.current);
-          console.error("Web PKI Error:", message, error);
-          setErrorMessage(message || "Ocorreu um erro na comunicação com o Web PKI.");
+          console.error("Falha no assinador:", message, error);
+          setErrorMessage(message || "Ocorreu um erro na comunicação com o assinador.");
           setState("error");
         },
       });
     } catch (err) {
+      if (generation !== initializationRef.current) return;
       if (initTimeoutRef.current) clearTimeout(initTimeoutRef.current);
-      setErrorMessage(err instanceof Error ? err.message : "Erro ao carregar componente Web PKI.");
+      setErrorMessage(err instanceof Error ? err.message : "Erro ao carregar o assinador.");
       setState("error");
     }
-  }, [ensureScriptLoaded, licenseKey, loadCertificates]);
+  }, [ensureScriptLoaded, effectiveLicenseKey, loadCertificates, engine, letter?.number, letter?.year]);
 
   useEffect(() => {
-    if (open) {
-      void ensureScriptLoaded().then(initWebPki).catch(() => { setState("error"); setErrorMessage("Não foi possível carregar o Web PKI."); });
-    }
-    return () => { if (initTimeoutRef.current) clearTimeout(initTimeoutRef.current); };
-  }, [open, initWebPki, ensureScriptLoaded]);
+    if (open && activeTab === "direct") void initWebPki();
+    return () => {
+      ++initializationRef.current;
+      pkiRef.current = null;
+      if (initTimeoutRef.current) clearTimeout(initTimeoutRef.current);
+    };
+  }, [open, activeTab, initWebPki]);
 
   // Executa assinatura direta (PAdES) em 2 etapas
   async function handleDirectSign(options?: {
@@ -301,16 +325,16 @@ export function WebPkiDialog({
       return;
     }
 
-    const pki = window.lacunaWebPkiInstance;
+    const pki = pkiRef.current;
     if (!pki) {
-      toast.error("Componente Web PKI não está inicializado.");
+      toast.error("O assinador não está conectado.");
       return;
     }
 
     try {
       setState("signing_start");
 
-      // 1. Lê o certificado público em Base64 através do Web PKI
+      // 1. Lê somente o certificado público em Base64 pelo provedor selecionado.
       const certContent = await new Promise<string>((resolve, reject) => {
         pki
           .readCertificate(selectedThumbprint)
@@ -375,7 +399,7 @@ export function WebPkiDialog({
         throw new Error(completeData.error || "Não foi possível gravar o PDF assinado.");
       }
 
-      toast.success(completeData.message || "Ofício assinado com sucesso via Web PKI!");
+      toast.success(completeData.message || "Ofício assinado com sucesso!");
       onSuccess(completeData.letter);
       onOpenChange(false);
     } catch (error) {
@@ -537,7 +561,7 @@ export function WebPkiDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(nextOpen) => { if (!isSigning && !uploadingSigned) onOpenChange(nextOpen); }}>
       <DialogContent className="sm:max-w-[620px]">
         <DialogHeader>
           <div className="flex items-center justify-between">
@@ -566,6 +590,7 @@ export function WebPkiDialog({
           <div className="mt-4 grid grid-cols-2 rounded-xl bg-slate-100 p-1 text-xs">
             <button
               type="button"
+              disabled={isSigning || uploadingSigned}
               onClick={() => setActiveTab("direct")}
               className={`flex items-center justify-center gap-1.5 rounded-lg py-2 font-medium transition ${
                 activeTab === "direct"
@@ -577,6 +602,7 @@ export function WebPkiDialog({
             </button>
             <button
               type="button"
+              disabled={isSigning || uploadingSigned}
               onClick={() => setActiveTab("onr")}
               className={`flex items-center justify-center gap-1.5 rounded-lg py-2 font-medium transition ${
                 activeTab === "onr"
@@ -594,32 +620,24 @@ export function WebPkiDialog({
         {/* ========================================================================= */}
         {activeTab === "direct" && (
           <div className="space-y-4 py-1">
-            {/* Alerta de host diferente de localhost sem licença */}
-            {!isLocalhost && !licenseKey && (
-              <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="size-4 shrink-0 text-amber-600 mt-0.5" />
-                  <div>
-                    <p className="font-semibold">Acesso via rede ({currentHostname}):</p>
-                    <p className="mt-0.5 text-slate-700">
-                      O componente Web PKI opera livre de licença no endereço local. Para assinar sem restrições, acesse via <strong>localhost</strong> ou utilize a aba do <strong>Assinador ONR</strong> acima.
-                    </p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="mt-2 h-7 bg-white text-xs text-amber-900 hover:bg-amber-100"
-                      onClick={() => {
-                        window.location.href = window.location.href.replace(
-                          window.location.hostname,
-                          "localhost"
-                        );
-                      }}
-                    >
-                      <Globe className="mr-1 size-3" /> Abrir em http://localhost:{window.location.port || 5174}
-                    </Button>
-                  </div>
+            <div className="space-y-2 rounded-xl border border-slate-200 p-3 text-sm">
+              <label htmlFor="signer-engine" className="font-medium text-slate-800">Assinador</label>
+              <select id="signer-engine" className="w-full rounded-md border border-slate-300 bg-white p-2" value={engine} disabled={isSigning} onChange={event => setEngine(event.target.value as "local" | "lacuna")}>
+                <option value="local">Assinador local — Windows, A1 e A3</option>
+                <option value="lacuna">Web PKI — licença do domínio</option>
+              </select>
+              {engine === "local" && <>
+                <p className="text-xs leading-5 text-slate-600">Use o certificado A1 instalado no Windows ou conecte o token A3 com o driver do fabricante. Confirme a assinatura na janela do Windows; o PIN será solicitado pelo driver quando necessário.</p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <a href="/assinador-local.zip" download="assinador-local.zip" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-[#18332e] px-3 py-2 text-xs font-medium text-white hover:bg-[#234b43] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"><Download className="size-4" /> Baixar assinador para Windows</a>
+                  <a href="/assinador-local.html" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center text-xs font-medium text-emerald-800 underline">Como instalar no Chrome/Edge</a>
                 </div>
+              </>}
+            </div>
+            {engine === "lacuna" && !isLocalhost && !licenseKey && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+                <p className="font-semibold">Licença Web PKI não configurada para {currentHostname}</p>
+                <p className="mt-1">Selecione o assinador local acima, configure a licença do Web PKI nas configurações ou utilize a aba Assinador ONR.</p>
               </div>
             )}
 
@@ -627,7 +645,7 @@ export function WebPkiDialog({
             {state === "checking" && (
               <div className="my-6 grid place-items-center py-6 text-center text-sm text-slate-500">
                 <Loader2 className="size-8 animate-spin text-[#a68845]" />
-                <p className="mt-3 font-medium text-slate-700">Conectando ao componente Web PKI...</p>
+                <p className="mt-3 font-medium text-slate-700">Conectando ao assinador...</p>
                 <p className="mt-1 text-xs text-slate-400">
                   Lendo certificados instalados e verificando token criptográfico USB.
                 </p>
@@ -635,7 +653,10 @@ export function WebPkiDialog({
             )}
 
             {/* ESTADO: EXTENSÃO NÃO DETECTADA */}
-            {state === "not_installed" && (
+            {state === "not_installed" && engine === "local" && (
+              <p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">O assinador local não respondeu. Siga as instruções de instalação acima e recarregue a página.</p>
+            )}
+            {state === "not_installed" && engine === "lacuna" && (
               <div className="space-y-3.5 py-1">
                 <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 text-xs text-amber-950">
                   <div className="flex items-start gap-2.5">
@@ -684,6 +705,7 @@ export function WebPkiDialog({
                       type="button"
                       size="sm"
                       className="mt-2.5 bg-emerald-800 text-white hover:bg-emerald-900 h-7 text-xs"
+                      disabled={isSigning || uploadingSigned}
                       onClick={() => setActiveTab("onr")}
                     >
                       Ir para Assinador ONR
@@ -848,13 +870,13 @@ export function WebPkiDialog({
 
                 <p className="text-sm font-semibold text-slate-800">
                   {state === "signing_start" && "1/3 Preparando documento e gerando hash..."}
-                  {state === "signing_pin" && "2/3 Aguardando confirmação do Token (digite seu PIN)..."}
+                  {state === "signing_pin" && "2/3 Aguardando sua confirmação no Windows..."}
                   {state === "signing_complete" && "3/3 Gravando assinatura digital no PDF..."}
                 </p>
 
                 <p className="mt-1 max-w-sm text-xs text-slate-500">
                   {state === "signing_pin"
-                    ? "Verifique a janela do seu assinador/token no Windows e informe o PIN de autorização."
+                    ? "Confirme a solicitação na janela do Windows e informe o PIN se o driver solicitar."
                     : "Aplicando os padrões criptográficos e metadados oficiais do cartório."}
                 </p>
               </div>
@@ -885,6 +907,7 @@ export function WebPkiDialog({
                   <Button
                     type="button"
                     className="flex-1 bg-emerald-700 text-white hover:bg-emerald-800"
+                    disabled={isSigning || uploadingSigned}
                     onClick={() => setActiveTab("onr")}
                   >
                     Usar Assinador ONR
@@ -1056,7 +1079,7 @@ export function WebPkiDialog({
                 </strong>
               </div>
               <div className="flex justify-between">
-                <span>Componente Web PKI:</span>
+                <span>{engine === "local" ? "Assinador local:" : "Web PKI:"}</span>
                 <strong className={state === "ready" ? "text-emerald-700" : "text-amber-700"}>
                   {state === "ready" ? "Pronto" : state}
                 </strong>

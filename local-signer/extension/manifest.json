@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Assinador do Sistema de Ofícios",
+  "version": "1.0.0",
+  "description": "Conecta o Sistema de Ofícios aos certificados do Windows, com confirmação local para cada assinatura.",
+  "permissions": ["nativeMessaging"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [{
+    "matches": ["https://oficios.registromanacapuru.com.br/*", "http://localhost/*"],
+    "js": ["content.js"],
+    "run_at": "document_start",
+    "all_frames": false
+  }]
+}

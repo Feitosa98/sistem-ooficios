@@ -4,6 +4,12 @@ Consulte [Correções, validação e ativação](./MELHORIAS-E-VALIDACAO.md) par
 
 Comandos locais: `npm run typecheck`, `npm run lint`, `npm test` e `npm run dev`. Build, lint, start e geração de migrações têm wrappers compatíveis com Windows. O instalador `install:ci` abaixo continua exclusivo de Linux; em Windows, use `npm ci` para instalar o lockfile.
 
+## Assinador local A1/A3 para Windows
+
+A assinatura direta permite escolher o componente local do sistema ou o Web PKI. O componente local usa certificados RSA no repositório pessoal do Windows: A1 importado e A3 com driver CSP/CNG compatível. A chave privada permanece no computador/token e cada assinatura exige confirmação local. A validação de confiança e revogação do servidor continua obrigatória.
+
+Consulte [instalação, compatibilidade e testes](local-signer/LEIA-ME.md). Compile o pacote com `powershell -NoProfile -ExecutionPolicy Bypass -File local-signer/build.ps1`; o script atualiza os downloads em `public/assinador-local.zip` e `hostinger/public/assinador-local.zip`. A página `/assinador-local.html` orienta a instalação. Antes da ativação, publique o código e homologue com os certificados e drivers reais usados no cartório.
+
 ## Documentação original da infraestrutura
 
 # vinext-starter

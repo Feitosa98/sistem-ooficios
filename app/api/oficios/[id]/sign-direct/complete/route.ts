@@ -21,6 +21,6 @@ export const POST = withAccess(async (request, context: RouteContext, actor) => 
   if (!saved.session) throw new HttpError(409, "A sessão já foi concluída.");
   const { signedPdf } = await completePdfSignature(saved.session, input.data.signature);
   await validateSignedPdf(signedPdf);
-  const updated = await commitSignature(letter, signedPdf, { ownerEmail: actor.email, signerName: saved.signerName, signerRole: saved.signerRole, provider: "Web PKI — assinatura verificada", sessionToken: saved.row.token });
+  const updated = await commitSignature(letter, signedPdf, { ownerEmail: actor.email, signerName: saved.signerName, signerRole: saved.signerRole, provider: "Assinatura digital direta — verificada", sessionToken: saved.row.token });
   return Response.json({ success: true, letter: updated, message: "Assinatura verificada e documento preservado." });
 });
